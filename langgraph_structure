@@ -1,0 +1,47 @@
+digraph LangGraph_RPG_Engine {
+	rankdir=TB ratio=auto size="20,15"
+	node [fillcolor=lightblue fontname=Arial shape=box style=filled]
+	edge [fontname=Arial fontsize=10]
+	START [label="开始" fillcolor=lightgreen]
+	init_state [label="初始化状态" fillcolor=lightblue]
+	is_command [label="命令判断" fillcolor=lightgray]
+	handle_command [label="命令处理" fillcolor=lightblue]
+	dispatcher [label="调度器" fillcolor=lightblue]
+	event_judge [label="事件裁判" fillcolor=lightblue]
+	memory_recorder [label="记忆记录器" fillcolor=lightblue]
+	variable_updater [label="变量更新器" fillcolor=lightblue]
+	enemy_action [label="敌人行动" fillcolor=lightblue]
+	should_auto_interact [label="自动交互判断" fillcolor=lightgray]
+	auto_interact_setup [label="自动交互设置" fillcolor=lightblue]
+	after_auto_variable_updater [label="自动后变量更新判断" fillcolor=lightgray]
+	response_composer [label="响应合成器" fillcolor=lightblue]
+	END [label="结束" fillcolor=lightcoral]
+	char_respond_char_001 [label="角色响应
+char_001" fillcolor=lightpink]
+	char_respond_char_002 [label="角色响应
+char_002" fillcolor=lightpink]
+	START -> init_state
+	init_state -> is_command
+	is_command -> handle_command [label=command]
+	is_command -> dispatcher [label=game]
+	handle_command -> END
+	dispatcher -> "char_respond_*" [label="并行所有角色"]
+	"char_respond_*" -> event_judge
+	"char_respond_*" -> memory_recorder
+	event_judge -> variable_updater
+	memory_recorder -> variable_updater
+	variable_updater -> after_auto_variable_updater
+	after_auto_variable_updater -> auto_interact_setup [label=auto_loop]
+	after_auto_variable_updater -> enemy_action [label=proceed]
+	enemy_action -> should_auto_interact
+	should_auto_interact -> auto_interact_setup [label=continue]
+	should_auto_interact -> response_composer [label=done]
+	auto_interact_setup -> dispatcher
+	response_composer -> END
+	dispatcher -> char_respond_char_001
+	char_respond_char_001 -> event_judge
+	char_respond_char_001 -> memory_recorder
+	dispatcher -> char_respond_char_002
+	char_respond_char_002 -> event_judge
+	char_respond_char_002 -> memory_recorder
+}
